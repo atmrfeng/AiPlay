@@ -1,0 +1,940 @@
+/* ============================================================
+ * main.css —— 设计系统（奶油粉 · 高级质感）
+ * 参考新版 App 的视觉语言：柔和粉底 + 渐变胶囊卡 + 3D 图标
+ * 同时保留 PC 宽度上限 / 横屏双栏 / 安全区适配
+ * ============================================================ */
+
+:root {
+  /* 品牌色 */
+  --brand: #ff3d68;
+  --brand-2: #ff7fa3;
+  --brand-grad: linear-gradient(135deg, #ff5c88, #ff2e63);
+  --brand-soft: #fff0f4;
+
+  /* 背景层 */
+  --bg: #fff7f9;
+  --bg-page: linear-gradient(180deg, #ffeef4 0%, #fff8fa 34%, #ffffff 100%);
+  --card: #ffffff;
+
+  /* 文字 */
+  --text: #3f2b32;
+  --text-2: #8d7681;
+  --text-3: #b9a5ae;
+
+  /* 线条 / 阴影 */
+  --line: rgba(255, 110, 145, 0.16);
+  --shadow-card: 0 8px 22px rgba(255, 120, 150, 0.16);
+  --shadow-float: 0 14px 40px rgba(255, 100, 140, 0.24);
+
+  --radius: 20px;
+  --radius-lg: 26px;
+  --radius-sm: 12px;
+
+  --font: "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", -apple-system, "Segoe UI", sans-serif;
+  --tabbar-h: 58px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  color: inherit;
+  outline: none;
+}
+
+/* ============ 外壳 ============ */
+.app-shell {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  height: 100dvh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-page);
+  overflow: hidden;
+}
+
+/* PC 端：居中手机比例 + 环境光 */
+@media (min-width: 641px) {
+  body {
+    background:
+      radial-gradient(900px 600px at 12% 0%, rgba(255, 150, 180, 0.28), transparent 62%),
+      radial-gradient(800px 600px at 88% 100%, rgba(190, 170, 255, 0.22), transparent 60%),
+      #fdf6f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .app-shell {
+    height: min(94vh, 900px);
+    border-radius: 30px;
+    box-shadow: 0 40px 100px rgba(200, 130, 155, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.9);
+  }
+}
+
+/* 横屏（高度受限）：左侧竖排导航 + 顶部标题 + 内容 */
+.app-shell.landscape {
+  max-width: none;
+  width: 100vw;
+  height: 100dvh;
+  flex-direction: initial;
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  grid-template-rows: auto 1fr;
+  border-radius: 0;
+}
+.app-shell.landscape .app-tabbar {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  width: 76px;
+  height: 100%;
+  flex-direction: column;
+  padding-top: 10px;
+  border-top: none;
+  border-right: 1px solid var(--line);
+}
+.app-shell.landscape .tab-item {
+  flex: 0 0 62px;
+}
+.app-shell.landscape .app-header {
+  grid-column: 2;
+  grid-row: 1;
+  padding: 8px 18px 2px;
+}
+.app-shell.landscape .header-deco {
+  display: none;
+}
+.app-shell.landscape .app-main {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+  min-height: 0;
+}
+.app-shell.landscape .mode-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+.app-shell.landscape .board-engine {
+  width: auto !important;
+  height: calc(100dvh - 150px);
+  max-width: none;
+}
+
+/* ============ 顶部标题区 ============ */
+.app-header {
+  position: relative;
+  flex: none;
+  padding: 14px 18px 6px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  z-index: 10;
+}
+.header-deco {
+  position: absolute;
+  top: -30px;
+  right: -20px;
+  width: 220px;
+  height: 170px;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 70% 30%, rgba(255, 170, 195, 0.55), transparent 55%),
+    radial-gradient(circle at 30% 60%, rgba(255, 205, 220, 0.5), transparent 60%);
+  filter: blur(6px);
+}
+.header-icon {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  margin-top: 2px;
+  color: #ff5c88;
+  filter: drop-shadow(0 4px 8px rgba(255, 90, 130, 0.28));
+}
+.header-icon svg {
+  width: 100%;
+  height: 100%;
+}
+.header-titles {
+  min-width: 0;
+  flex: 1;
+}
+.header-title {
+  font-size: 21px;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  background: linear-gradient(96deg, #ff4d6d 8%, #ff2e63 48%, #ff7a9c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  line-height: 1.2;
+}
+.header-sub {
+  margin-top: 3px;
+  font-size: 11.5px;
+  color: #c08d9d;
+  letter-spacing: 0.02em;
+}
+
+/* 会员胶囊 */
+.vip-pill {
+  position: relative;
+  z-index: 2;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 14px 0 12px;
+  border-radius: 999px;
+  background: linear-gradient(120deg, #ff9dbb, #ff4b74);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 800;
+  box-shadow: 0 6px 16px rgba(255, 80, 120, 0.35);
+  white-space: nowrap;
+}
+.vip-pill.on {
+  background: linear-gradient(120deg, #ffd479, #ff9f43);
+  box-shadow: 0 6px 16px rgba(255, 165, 70, 0.38);
+}
+
+/* ============ 页面容器 ============ */
+.app-main {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+.page {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 18px;
+}
+
+/* 移动端：二级页面统一左右缩进（桌面端有自己的 40px/居中规则，不受影响） */
+@media (max-width: 899px) {
+  .search-page {
+    padding-left: 14px;
+    padding-right: 14px;
+    box-sizing: border-box;
+  }
+}
+
+/* ============ 底部导航 ============ */
+.app-tabbar {
+  flex: none;
+  height: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  display: flex;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255, 130, 160, 0.12);
+  box-shadow: 0 -6px 24px rgba(255, 150, 175, 0.1);
+  z-index: 30;
+}
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #c3aab3;
+  transition: color 0.2s;
+}
+.tab-item .tab-ico {
+  width: 23px;
+  height: 23px;
+  display: block;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  opacity: 0.55;
+  filter: grayscale(0.4);
+}
+.tab-item.active {
+  color: var(--brand);
+}
+.tab-item.active .tab-ico {
+  transform: translateY(-2px) scale(1.1);
+  opacity: 1;
+  filter: none;
+}
+
+/* ============ 模式列表（复古胶囊卡） ============ */
+.mode-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  /* 左右不留 padding：卡片与「全部游戏」标题同一起点 */
+  padding: 2px 0 6px;
+}
+.mode-card {
+  position: relative;
+  margin: 0;
+  display: block;
+  width: 100%;
+  border-radius: 999px;
+  overflow: hidden;
+  transition: transform 0.16s ease, box-shadow 0.2s;
+  box-shadow: 0 6px 18px rgba(255, 130, 160, 0.16);
+  line-height: 0;
+}
+.mode-card:active {
+  transform: scale(0.975);
+}
+.mode-card img {
+  width: 100%;
+  display: block;
+}
+.mode-card.locked {
+  filter: grayscale(0.15);
+}
+.mode-lock {
+  position: absolute;
+  right: 9px;
+  top: 7px;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 2px 6px rgba(150, 60, 90, 0.28);
+  color: #e2264f;
+  font-size: 10px;
+  line-height: 21px;
+  text-align: center;
+}
+.mode-flag {
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  padding: 1px 7px;
+  border-radius: 8px;
+  font-size: 9.5px;
+  font-weight: 800;
+  line-height: 15px;
+  color: #fff;
+  background: linear-gradient(120deg, #ff8fb1, #ff3d68);
+  letter-spacing: 0.03em;
+}
+.mode-flag.user {
+  background: linear-gradient(120deg, #8fb8ff, #5f7dff);
+}
+
+/* 无横幅时的兜底配色卡 */
+.mode-card.plain {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 66px;
+  padding: 0 22px;
+  color: #fff;
+  background: linear-gradient(100deg, #ffb3c7, #ff7fa3 60%, #ff5c88);
+  line-height: 1.3;
+}
+.mode-card.plain .mc-name {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 6px rgba(160, 40, 70, 0.18);
+}
+.mode-card.plain .mc-meta {
+  margin-top: 6px;
+  font-size: 10.5px;
+  opacity: 0.9;
+  font-weight: 600;
+}
+.mode-card.plain .mc-emoji {
+  font-size: 34px;
+  filter: drop-shadow(0 6px 10px rgba(120, 30, 60, 0.22));
+}
+
+/* ============ 通用按钮 ============ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 46px;
+  padding: 0 22px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 800;
+  background: #fff;
+  color: var(--text);
+  box-shadow: 0 4px 14px rgba(255, 130, 160, 0.16);
+  transition: transform 0.12s, filter 0.12s;
+}
+.btn:active {
+  transform: scale(0.96);
+}
+.btn-primary {
+  background: var(--brand-grad);
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(255, 60, 105, 0.34);
+}
+.btn-ghost {
+  background: rgba(255, 90, 130, 0.08);
+  color: var(--brand);
+  box-shadow: none;
+}
+.btn-block {
+  width: 100%;
+}
+.btn[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ============ 卡片 / 面板 ============ */
+.panel {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 16px;
+}
+
+/* ============ 弹层 ============ */
+.sheet-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(60, 25, 40, 0.42);
+  backdrop-filter: blur(3px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  animation: fadeIn 0.2s ease;
+}
+.sheet {
+  width: 100%;
+  max-width: 360px;
+  background: #fff;
+  border-radius: 26px;
+  padding: 24px 20px 18px;
+  box-shadow: 0 30px 70px rgba(150, 50, 80, 0.28);
+  animation: popIn 0.26s cubic-bezier(0.34, 1.4, 0.64, 1);
+  text-align: center;
+}
+.sheet-title {
+  font-size: 17px;
+  font-weight: 900;
+  color: var(--text);
+}
+.sheet-text {
+  margin-top: 10px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--text-2);
+}
+.sheet-foot {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+.sheet-foot .btn {
+  flex: 1;
+  height: 44px;
+  font-size: 14.5px;
+}
+.input {
+  width: 100%;
+  height: 46px;
+  margin-top: 14px;
+  padding: 0 16px;
+  border-radius: 14px;
+  background: #fff5f8;
+  border: 1px solid rgba(255, 120, 150, 0.24);
+  font-size: 15px;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 20%;
+  transform: translate(-50%, 10px);
+  background: rgba(63, 43, 50, 0.9);
+  color: #fff;
+  font-size: 13.5px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  opacity: 0;
+  transition: all 0.24s;
+  z-index: 9999;
+  max-width: 76%;
+  text-align: center;
+  pointer-events: none;
+}
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.empty {
+  text-align: center;
+  color: var(--text-3);
+  font-size: 13px;
+  padding: 40px 0;
+}
+
+/* ============ 动画 ============ */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.fade-in { animation: fadeIn 0.28s ease; }
+.slide-up { animation: slideUp 0.3s ease; }
+.pop-in { animation: popIn 0.26s ease; }
+
+/* 页面切换 */
+.page-fade-enter-active,
+.page-fade-leave-active {
+  transition: opacity 0.18s ease;
+}
+.page-fade-enter-from,
+.page-fade-leave-to {
+  opacity: 0;
+}
+
+/* ============================================================
+ * 宽屏适配：平板（760-899）加宽双列；桌面（≥900）侧边导航
+ * ============================================================ */
+@media (min-width: 760px) and (max-width: 899px) {
+  .app-shell {
+    width: 100vw;
+    max-width: 760px;
+    height: 100dvh;
+    margin: 0 auto;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .app-shell .games-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .app-shell .mode-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 12px;
+  }
+}
+
+@media (min-width: 900px) {
+  body {
+    display: block;
+    background:
+      radial-gradient(900px 600px at 8% 0%, rgba(255, 150, 180, 0.18), transparent 60%),
+      radial-gradient(800px 600px at 95% 100%, rgba(190, 170, 255, 0.14), transparent 60%),
+      #fdf7f9;
+  }
+  .app-shell {
+    max-width: none;
+    width: 100%;
+    height: 100dvh;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    display: grid;
+    grid-template-columns: 104px 1fr;
+    grid-template-rows: auto 1fr;
+    flex-direction: initial;
+  }
+  .app-shell .app-tabbar {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    width: 104px;
+    height: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 22px;
+    border-top: none;
+    border-right: 1px solid var(--line);
+    box-shadow: none;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+  }
+  .app-shell .tab-item {
+    flex: 0 0 74px;
+    gap: 5px;
+    font-size: 11.5px;
+  }
+  .app-shell .tab-item .tab-ico {
+    width: 26px;
+    height: 26px;
+  }
+  .app-shell .app-header {
+    grid-column: 2;
+    grid-row: 1;
+    padding: 22px 40px 6px;
+    max-width: 1180px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .app-shell .header-title {
+    font-size: 24px;
+  }
+  .app-shell .header-deco {
+    width: 160px;
+    height: 120px;
+    opacity: 0.5;
+  }
+  .app-shell .vip-pill {
+    height: 34px;
+    font-size: 12.5px;
+  }
+  .app-shell .header-deco {
+    width: 160px;
+    height: 120px;
+    opacity: 0.5;
+  }
+  .app-shell .vip-pill {
+    height: 34px;
+    font-size: 12.5px;
+  }
+  .app-shell .header-sub {
+    font-size: 12px;
+  }
+  .app-shell .app-main {
+    grid-column: 2;
+    grid-row: 2;
+    min-height: 0;
+    min-width: 0;
+  }
+  .app-shell .app-main .page {
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-bottom: 32px;
+  }
+  /* 玩法页标题栏与内容区同宽对齐（仅桌面端去掉左右 14px） */
+  .app-shell .app-main .play-bar {
+    padding-left: 0;
+    padding-right: 0;
+    max-width: 720px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  /* 移动端恢复 14px 缩进 */
+  @media (max-width: 899px) {
+    .app-shell .app-main .play-bar {
+      padding-left: 14px;
+      padding-right: 14px;
+      max-width: none;
+    }
+  }
+  .app-shell .games-page {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  .app-shell .games-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .app-shell .gcard {
+    min-height: 150px;
+    padding: 20px 18px 16px;
+  }
+  .app-shell .gcard-name {
+    font-size: 16.5px;
+  }
+  /* 与「自制玩法」保持同一内容宽度 1040 */
+  .app-shell .mode-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 14px;
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 4px 0 10px;
+  }
+  .app-shell .list-head,
+  .app-shell .list-foot,
+  .app-shell .mine-head {
+    max-width: 1040px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .mode-card .mcard:hover {
+    box-shadow: 0 10px 24px rgba(190, 120, 145, 0.18);
+  }
+  .app-shell .us-page {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .app-shell .us-page > * {
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .app-shell .us-page .cal-cell {
+    aspect-ratio: auto;
+    height: 40px;
+    font-size: 13px;
+  }
+  .app-shell .us-page .cal-grid {
+    gap: 3px;
+  }
+  .app-shell .me-page {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .app-shell .sheet {
+    max-width: 720px;
+  }
+  .app-shell .page {
+    scrollbar-gutter: stable;
+  }
+  .app-shell .page {
+    scrollbar-gutter: stable;
+  }
+  .app-shell .page::-webkit-scrollbar {
+    width: 10px;
+  }
+  .app-shell .page::-webkit-scrollbar-thumb {
+    background: rgba(255, 140, 170, 0.28);
+    border-radius: 8px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+}
+
+/* ============================================================
+ * 宽屏（第二轮）：我们/小窝双栏、玩法页限宽、三列列表
+ * ============================================================ */
+@media (min-width: 900px) {
+  /* 我们：日历 + 重要日子 双栏 */
+  .app-shell .us-page {
+    max-width: 1000px;
+  }
+  .app-shell .us-page > * {
+    max-width: none;
+  }
+  .app-shell .us-page .hero,
+  .app-shell .us-page .resume,
+  .app-shell .us-page .seg {
+    max-width: 940px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .app-shell .us-page .cal-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 330px;
+    gap: 16px;
+    align-items: start;
+    max-width: 940px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .app-shell .us-page .special-card {
+    margin-top: 0;
+  }
+  .app-shell .us-page .cal-card {
+    padding: 18px 18px 14px;
+  }
+  .app-shell .us-page .filters,
+  .app-shell .us-page .groups,
+  .app-shell .us-page .wish-add,
+  .app-shell .us-page .wish-list,
+  .app-shell .us-page .wish-progress,
+  .app-shell .us-page .empty-box {
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
+
+  /* 小窝：左（档案/识别码/自制玩法）+ 右（数据/偏好） */
+  .app-shell .me-page {
+    max-width: 1000px;
+  }
+  .app-shell .me-cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+    max-width: 940px;
+    margin: 0 auto;
+  }
+  .app-shell .me-col > .group:first-child {
+    margin-top: 16px;
+  }
+  .app-shell .me-page > .profile-card,
+  .app-shell .me-page > .stats,
+  .app-shell .me-foot {
+    max-width: 940px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* 各玩法页限宽，避免在大屏被拉成一整行 */
+  .app-shell .mine-grid {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .app-shell .mine-progress,
+  .app-shell .mine-hint {
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .app-shell .truth-stage,
+  .app-shell .dice-stage,
+  .app-shell .traffic-stage {
+    max-width: 620px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .app-shell .wheel-stage {
+    max-width: 560px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .app-shell .pose-stage {
+    max-width: 460px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .app-shell .custom-page .editor {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .app-shell .play-bar {
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .app-shell .studio-page .new-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .app-shell .studio-page .import-card,
+  .app-shell .studio-page .group,
+  .app-shell .studio-page .empty-box {
+    max-width: 1040px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
+  .app-shell .studio-page .new-grid,
+  .app-shell .studio-page .intro {
+    max-width: 1040px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  /* 提示性文字（新建/导入/我的玩法）与内容卡片同宽对齐 */
+  .app-shell .studio-page .section-title,
+  .app-shell .studio-page .foot {
+    max-width: 1040px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .app-shell .mode-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .app-shell .games-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .app-shell .us-page {
+    max-width: 1100px;
+  }
+  /* 所有模块统一宽度，避免日历比标题栏宽出一截 */
+  .app-shell .us-page .hero,
+  .app-shell .us-page .resume,
+  .app-shell .us-page .seg,
+  .app-shell .us-page .cal-row {
+    max-width: 1040px;
+  }
+  .app-shell .us-page .cal-row {
+    grid-template-columns: minmax(0, 1fr) 360px;
+  }
+  .app-shell .us-page .filters,
+  .app-shell .us-page .wish-add,
+  .app-shell .us-page .wish-progress,
+  .app-shell .us-page .empty-box {
+    max-width: 1040px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .app-shell .us-page .groups,
+  .app-shell .us-page .wish-list {
+    max-width: 1040px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 18px;
+    align-items: start;
+  }
+  .app-shell .us-page .groups .group {
+    margin-top: 0;
+  }
+  .app-shell .us-page .wish-list .wish-item {
+    margin-bottom: 0;
+  }
+  .app-shell .me-page {
+    max-width: 1100px;
+  }
+  .app-shell .me-cols,
+  .app-shell .me-page > .profile-card,
+  .app-shell .me-page > .stats,
+  .app-shell .me-foot {
+    max-width: 1040px;
+  }
+}

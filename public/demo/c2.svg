@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#e8f7ff"/><stop offset="100%" stop-color="#bfe3ff"/></linearGradient></defs>
+  <rect width="600" height="800" fill="url(#g)"/>
+  <circle cx="80" cy="120" r="120" fill="#fff" opacity=".4"/>
+  <circle cx="520" cy="680" r="150" fill="#4a9bff" opacity=".16"/>
+  <circle cx="300" cy="360" r="86" fill="#4a9bff" opacity=".9"/>
+  <circle cx="272" cy="336" r="12" fill="#fff" opacity=".85"/>
+  <circle cx="328" cy="336" r="12" fill="#fff" opacity=".85"/>
+  <path d="M270 380c18 22 42 22 60 0" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round" opacity=".9"/>
+  <text x="300" y="540" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="40" font-weight="700" fill="#5d3743">一起做一顿晚饭</text>
+  <text x="300" y="592" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="24" fill="#8d6a78" opacity=".9">各做一道菜，互相打分</text>
+  <text x="300" y="720" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="20" fill="#9b7f8a" opacity=".8">示例图片卡 · 可替换为你们的照片</text>
+</svg>

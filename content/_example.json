@@ -1,0 +1,28 @@
+{
+  "_note": "这是一个示例文件：以 _ 开头的文件不会被构建读取。复制本文件为 my-pack.json 后修改内容即可生效。",
+  "modes": [
+    {
+      "game": "flying",
+      "title": "示例·周末任务",
+      "cards": [
+        { "type": "text", "text": "一起做一顿晚饭" },
+        { "type": "text", "text": "给对方读一段文字" }
+      ]
+    },
+    {
+      "game": "truth",
+      "title": "示例·温柔真心话",
+      "cards": [
+        { "type": "text", "kind": "truth", "text": "今天最想感谢我的一件事？" },
+        { "type": "text", "kind": "dare", "text": "给我一个 10 秒拥抱" }
+      ]
+    },
+    {
+      "game": "pose",
+      "title": "示例·图片卡牌",
+      "cards": [
+        { "type": "image", "text": "一起看一场电影", "image": "/demo/c1.svg" }
+      ]
+    }
+  ]
+}

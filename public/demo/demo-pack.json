@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "title": "示例内容包",
+  "modes": [
+    {
+      "game": "flying",
+      "title": "示例 · 文字任务",
+      "cards": [
+        {
+          "type": "text",
+          "text": "给对方一个 10 秒拥抱"
+        },
+        {
+          "type": "text",
+          "text": "说出对方三个优点"
+        },
+        {
+          "type": "text",
+          "text": "一起拍一张合照"
+        },
+        {
+          "type": "text",
+          "text": "说出你们第一次约会的地点"
+        },
+        {
+          "type": "text",
+          "text": "给对方读一段文字"
+        },
+        {
+          "type": "text",
+          "text": "互相画一张速写"
+        }
+      ]
+    },
+    {
+      "game": "truth",
+      "title": "示例 · 真心话",
+      "cards": [
+        {
+          "type": "text",
+          "kind": "truth",
+          "text": "你第一次心动是什么时候？"
+        },
+        {
+          "type": "text",
+          "kind": "truth",
+          "text": "最喜欢我哪一点？"
+        },
+        {
+          "type": "text",
+          "kind": "dare",
+          "text": "给我一个 10 秒拥抱"
+        },
+        {
+          "type": "text",
+          "kind": "dare",
+          "text": "夸我三句话，不许重复"
+        }
+      ]
+    },
+    {
+      "game": "pose",
+      "title": "示例 · 图片姿势卡",
+      "cards": [
+        {
+          "type": "image",
+          "text": "一起看一场电影",
+          "image": "/demo/c1.svg"
+        },
+        {
+          "type": "image",
+          "text": "一起做一顿晚饭",
+          "image": "/demo/c2.svg"
+        },
+        {
+          "type": "image",
+          "text": "并肩看一次日落",
+          "image": "/demo/c3.svg"
+        },
+        {
+          "type": "image",
+          "text": "十指相扣走一段路",
+          "image": "/demo/c4.svg"
+        },
+        {
+          "type": "image",
+          "text": "给对方读一段文字",
+          "image": "/demo/c5.svg"
+        },
+        {
+          "type": "image",
+          "text": "互相画一张速写",
+          "image": "/demo/c6.svg"
+        }
+      ]
+    }
+  ]
+}
