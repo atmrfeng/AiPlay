@@ -15,6 +15,8 @@ const mode = computed(() => lib.modeById(modeId.value))
 const deck = ref<{ image?: string; text?: string }[]>([])
 const index = ref(0)
 const flipped = ref(false)
+/** 本次开局里「已经翻开过」的卡片下标，用于统计已抽张数（重复翻同一张不重复计数） */
+const seen = new Set<number>()
 const drawn = ref(0)
 const lastRecorded = ref(-1)
 
@@ -31,15 +33,23 @@ function build() {
   deck.value = shuffle((mode.value?.cards ?? []).filter((c) => c.image || c.text))
   index.value = 0
   flipped.value = false
+  seen.clear()
   drawn.value = 0
+  lastRecorded.value = -1
 }
 
 function flip() {
   flipped.value = !flipped.value
   const c = current.value
-  if (flipped.value && c && lastRecorded.value !== index.value) {
-    lastRecorded.value = index.value
-    lib.addHistory({ game: 'pose', modeTitle: mode.value?.title || '', text: c.text || '姿势卡', image: c.image })
+  if (flipped.value && c) {
+    if (!seen.has(index.value)) {
+      seen.add(index.value)
+      drawn.value = seen.size
+    }
+    if (lastRecorded.value !== index.value) {
+      lastRecorded.value = index.value
+      lib.addHistory({ game: 'pose', modeTitle: mode.value?.title || '', text: c.text || '姿势卡', image: c.image })
+    }
   }
 }
 
@@ -82,7 +92,7 @@ onMounted(build)
         <button class="btn btn-ghost" @click="build">重新洗牌</button>
         <button class="btn btn-primary" @click="next">下一张</button>
       </div>
-      <div class="pose-hint">共 {{ deck.length }} 张 · 已抽 {{ drawn + (flipped ? 1 : 0) }} 张</div>
+      <div class="pose-hint">共 {{ deck.length }} 张 · 已抽 {{ drawn }} 张</div>
     </div>
   </div>
 </template>
