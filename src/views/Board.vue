@@ -122,6 +122,36 @@ function rollDice() {
 
 const taskFaved = computed(() => (gs.taskCard?.text ? lib.isFavorite(gs.taskCard.text, 'flying') : false))
 
+// ——— 格子内容预览（只读，不改变任何对局状态）———
+const peekIndex = ref<number | null>(null)
+const peekInfo = computed(() => {
+  const i = peekIndex.value
+  if (i === null || !state.value) return null
+  const b = state.value.board
+  const card = tiles.value[i] || null
+  const isStart = i === b.startIndex
+  const isEnd = i === b.endIndex
+  return {
+    index: i,
+    isStart,
+    isEnd,
+    kind: isStart ? '起点' : isEnd ? '终点' : card?.text || card?.image ? '任务' : '空地',
+    text: card?.text || '',
+    image: card?.image || '',
+    remaining: Math.max(0, b.path.length - 1 - i),
+  }
+})
+
+function openPeek(i: number) {
+  // 任务弹层打开时不干扰（避免遮罩叠加）
+  if (gs.showTask) return
+  peekIndex.value = i
+}
+
+function closePeek() {
+  peekIndex.value = null
+}
+
 function toggleTaskFav() {
   const c = gs.taskCard
   if (!c?.text) return
@@ -244,6 +274,7 @@ onBeforeUnmount(() => {
       :tiles="tiles"
       :players="players"
       :current-turn="currentTurn"
+      @tile-click="openPeek"
     >
       <template #center>
         <button class="dice-btn" :class="{ rolling: gs.rolling }" :disabled="penalizing || state.over" @click="rollDice">
@@ -279,6 +310,28 @@ onBeforeUnmount(() => {
     </aside>
 
     <div class="play-hint">点击骰子前进 · 每格都有任务 · 先到终点获胜</div>
+    </div>
+
+    <!-- 格子内容预览（只读，不影响对局） -->
+    <div v-if="peekInfo" class="sheet-mask" @click.self="closePeek">
+      <div class="peek-card pop-in">
+        <div class="peek-head">
+          <span class="peek-idx">第 {{ peekInfo.index + 1 }} 格</span>
+          <span class="peek-kind" :class="{ empty: peekInfo.kind === '空地', end: peekInfo.isEnd, start: peekInfo.isStart }">
+            {{ peekInfo.kind }}
+          </span>
+          <span v-if="!peekInfo.isEnd && !peekInfo.isStart" class="peek-left">距终点 {{ peekInfo.remaining }} 格</span>
+        </div>
+        <div v-if="peekInfo.text" class="peek-body" v-html="richText(peekInfo.text)"></div>
+        <ImgRef v-if="peekInfo.image" class="peek-img" :src="peekInfo.image" />
+        <div v-if="!peekInfo.text && !peekInfo.image" class="peek-empty">
+          <span v-if="peekInfo.isStart">这里是起点，出发不需要抽任务。</span>
+          <span v-else-if="peekInfo.isEnd">走到这里就赢了。</span>
+          <span v-else>这一格没有安排内容。</span>
+        </div>
+        <div class="peek-tip">仅查看，不影响对局</div>
+        <button class="btn btn-ghost btn-block" @click="closePeek">关闭</button>
+      </div>
     </div>
 
     <!-- 任务卡 -->
@@ -427,6 +480,85 @@ onBeforeUnmount(() => {
   padding-top: 10px;
 }
 
+/* 格子内容预览（只读，不复用任务卡，避免误触任务逻辑） */
+.peek-card {
+  width: 100%;
+  max-width: 340px;
+  background: linear-gradient(180deg, #fffefe, #fff6f9);
+  border-radius: 24px;
+  padding: 18px 20px 16px;
+  box-shadow: 0 24px 56px rgba(160, 60, 90, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  text-align: center;
+}
+.peek-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.peek-idx {
+  font-size: 12px;
+  font-weight: 800;
+  color: #6b4552;
+}
+.peek-kind {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #e2587f;
+  background: rgba(255, 90, 130, 0.1);
+  padding: 2px 9px;
+  border-radius: 999px;
+}
+.peek-kind.empty {
+  color: #b08a99;
+  background: rgba(176, 138, 153, 0.12);
+}
+.peek-kind.start {
+  color: #5b8def;
+  background: rgba(91, 141, 239, 0.12);
+}
+.peek-kind.end {
+  color: #d99a22;
+  background: rgba(217, 154, 34, 0.14);
+}
+.peek-left {
+  font-size: 10px;
+  color: #b08a99;
+}
+.peek-body {
+  font-size: calc(var(--card-fs, 16px) * 0.94);
+  line-height: 1.75;
+  font-weight: 600;
+  color: #4a3038;
+  word-break: break-word;
+  max-height: 46vh;
+  overflow-y: auto;
+}
+.peek-body :deep(strong) {
+  color: #e2264f;
+}
+.peek-img {
+  width: 100%;
+  border-radius: 14px;
+  margin-top: 4px;
+  max-height: 46vh;
+  object-fit: contain;
+}
+.peek-empty {
+  font-size: 13px;
+  color: #8d6a78;
+  line-height: 1.7;
+  padding: 10px 0 4px;
+}
+.peek-tip {
+  margin: 14px 0 10px;
+  font-size: 10px;
+  color: #c4a8b3;
+}
 .task-card {
   position: relative;
   width: 100%;
