@@ -17,6 +17,9 @@ const options = ref<string[]>([])
 const angle = ref(0)
 const spinning = ref(false)
 const result = ref<string | null>(null)
+/** 只读查看：单个扇区 / 全部内容 */
+const peekIdx = ref<number | null>(null)
+const showAll = ref(false)
 
 const palette = ['#ffb3c9', '#ffe08a', '#a9c8ff', '#a8e6b8', '#d7b8ff', '#ffc7a8']
 
@@ -83,8 +86,13 @@ onMounted(rebuild)
           :style="{ background: wheelBg, transform: `rotate(${angle}deg)` }"
           :class="{ spinning }"
         >
-          <div v-for="(_opt, i) in options" :key="i" class="slice-label" :style="{ transform: `rotate(${i * seg}deg)` }">
-            <span class="slice-num" :style="{ transform: `translateX(-50%) rotate(${-i * seg}deg)` }">{{ i + 1 }}</span>
+          <div v-for="(opt, i) in options" :key="i" class="slice-label" :style="{ transform: `rotate(${i * seg}deg)` }">
+            <span
+              class="slice-num"
+              :style="{ transform: `translateX(-50%) rotate(${-i * seg}deg)` }"
+              @click.stop="peekIdx = i"
+              :title="opt"
+            >{{ i + 1 }}</span>
           </div>
           <div class="wheel-hub">GO</div>
         </div>
@@ -95,6 +103,32 @@ onMounted(rebuild)
       </button>
 
       <div class="wheel-hint">共 {{ options.length }} 个选项 · 每次刷新会重新洗牌</div>
+      <button class="all-btn" @click="showAll = true">查看全部内容</button>
+    </div>
+
+    <!-- 单项只看：点转盘上的数字 -->
+    <div v-if="peekIdx !== null" class="sheet-mask" @click.self="peekIdx = null">
+      <div class="result-card pop-in">
+        <div class="rc-tag">第 {{ peekIdx + 1 }} 项 · 仅查看</div>
+        <div class="rc-text">{{ options[peekIdx] }}</div>
+        <div class="rc-actions">
+          <button class="btn btn-primary" style="flex: 1" @click="peekIdx = null">关闭</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 全部内容：只读列表 -->
+    <div v-if="showAll" class="sheet-mask" @click.self="showAll = false">
+      <div class="all-card pop-in">
+        <div class="rc-tag">全部 {{ options.length }} 项 · 仅查看</div>
+        <div class="all-list">
+          <div v-for="(opt, i) in options" :key="i" class="all-row">
+            <span class="all-dot" :style="{ background: palette[i % palette.length] }">{{ i + 1 }}</span>
+            <span class="all-text">{{ opt }}</span>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block" @click="showAll = false">关闭</button>
+      </div>
     </div>
 
     <div v-if="result" class="sheet-mask" @click.self="result = null">
@@ -201,6 +235,8 @@ onMounted(rebuild)
   font-weight: 900;
   color: #7d4b5c;
   opacity: 0.85;
+  cursor: pointer;
+  padding: 2px 4px;
 }
 .wheel-hub {
   position: absolute;
@@ -228,6 +264,62 @@ onMounted(rebuild)
 .wheel-hint {
   font-size: 11.5px;
   color: #c4a8b3;
+}
+.all-btn {
+  margin-top: 6px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #e2587f;
+  background: rgba(255, 120, 150, 0.1);
+}
+.all-btn:active {
+  transform: scale(0.96);
+}
+.all-card {
+  width: 100%;
+  max-width: 340px;
+  max-height: 72vh;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 20px 18px 16px;
+  box-shadow: 0 24px 60px rgba(160, 60, 90, 0.24);
+}
+.all-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 2px;
+}
+.all-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+}
+.all-dot {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 900;
+  color: #7a3f52;
+}
+.all-text {
+  flex: 1;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: #6b4552;
 }
 .result-card {
   width: 100%;
