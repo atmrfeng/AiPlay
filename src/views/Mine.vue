@@ -21,6 +21,8 @@ const cells = ref<{ card: Card; mine: boolean; open: boolean }[]>([])
 const active = ref<{ card: Card; mine: boolean } | null>(null)
 const finished = ref(false)
 const boom = ref(false)
+/** 只读查看已翻开的格子（不写记录、不改局面） */
+const peek = ref(false)
 
 function shuffle<T>(a: T[]): T[] {
   const arr = a.slice()
@@ -41,13 +43,23 @@ function build() {
   active.value = null
   finished.value = false
   boom.value = false
+  peek.value = false
 }
 
 function openCell(i: number) {
   const c = cells.value[i]
-  if (!c || c.open || finished.value) return
+  if (!c) return
+  // 已翻开的格子：再次点击 = 只读查看，不重复写记录、不改变对局
+  if (c.open) {
+    active.value = { card: c.card, mine: c.mine }
+    peek.value = true
+    boom.value = false
+    return
+  }
+  if (finished.value) return
   c.open = true
   active.value = { card: c.card, mine: c.mine }
+  peek.value = false
   tick(lib.settings.sound, c.mine ? 320 : 560, 0.08)
   buzz(lib.settings.vibrate, c.mine ? [24, 40, 24] : 16)
   if (c.card.text) lib.addHistory({ game: 'mine', modeTitle: mode.value?.title || '', text: c.card.text, image: c.card.image })
@@ -90,14 +102,15 @@ onMounted(build)
       </button>
     </div>
 
-    <div class="mine-hint">点开格子领取任务 · 踩到 💥 要接受对方的小惩罚</div>
+    <div class="mine-hint">点开格子领取任务 · 再点已翻开的格子可重看内容 · 踩到 💥 要接受对方的小惩罚</div>
 
     <div v-if="active" class="sheet-mask" @click.self="active = null">
       <div class="task-card pop-in" :class="{ boom }">
-        <div class="task-tag">{{ boom ? '踩到雷啦 💥 接受惩罚' : '任务' }}</div>
+        <div class="task-tag">{{ peek ? '查看内容' : boom ? '踩到雷啦 💥 接受惩罚' : '任务' }}</div>
         <div class="task-body" v-html="richText(active.card.text || '')"></div>
         <ImgRef v-if="active.card.image" class="task-img" :src="active.card.image" />
-        <button class="btn btn-primary btn-block" @click="active = null; finished && build()">
+        <button v-if="peek" class="btn btn-primary btn-block" @click="active = null; peek = false">关闭</button>
+        <button v-else class="btn btn-primary btn-block" @click="active = null; finished && build()">
           {{ finished ? '再来一局' : '完成' }}
         </button>
       </div>
