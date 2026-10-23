@@ -91,10 +91,16 @@ function playerOffset(playerId: string): { dx: number; dy: number } {
           'tile-end': t.index === board.endIndex,
         }"
         :style="{ gridArea: t.area }"
+        role="button"
+        tabindex="0"
+        :aria-label="`第 ${t.index + 1} 格`"
+        @click="$emit('tileClick', t.index)"
+        @keydown.enter.prevent="$emit('tileClick', t.index)"
+        @keydown.space.prevent="$emit('tileClick', t.index)"
       >
         <span v-if="t.index === board.startIndex" class="tile-ico">🏠</span>
         <span v-else-if="t.index === board.endIndex" class="tile-ico">🏆</span>
-        <span v-else class="tile-num" @click="$emit('tileClick', t.index)">{{ t.index + 1 }}</span>
+        <span v-else class="tile-num">{{ t.index + 1 }}</span>
       </div>
 
       <!-- 棋子层 -->
@@ -173,6 +179,15 @@ function playerOffset(playerId: string): { dx: number; dy: number } {
   box-shadow: 0 2px 5px rgba(255, 150, 175, 0.16), inset 0 1px 0 #fff;
   cursor: pointer;
   transition: transform 0.12s, box-shadow 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.tile:active {
+  transform: scale(0.93);
+  box-shadow: 0 1px 3px rgba(255, 150, 175, 0.24);
+}
+.tile:focus-visible {
+  outline: 2px solid #ff8fb3;
+  outline-offset: 1px;
 }
 .tile::after {
   content: "";
